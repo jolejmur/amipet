@@ -73,10 +73,10 @@ class _LoginScreenState extends State<LoginScreen>
             begin: Alignment.topLeft,
             end: Alignment.bottomRight,
             colors: [
-              Color(0xFF047857), // Verde esmeralda profundo
-              Color(0xFF059669), // Verde medio
-              Color(0xFF10B981), // Verde claro
-              Color(0xFF34D399), // Verde menta
+              Color(0xFF047857),
+              Color(0xFF059669),
+              Color(0xFF10B981),
+              Color(0xFF34D399),
             ],
             stops: [0.0, 0.3, 0.7, 1.0],
           ),
@@ -98,11 +98,8 @@ class _LoginScreenState extends State<LoginScreen>
                           child: Column(
                             mainAxisAlignment: MainAxisAlignment.center,
                             children: [
-                              // Logo con patita animada
                               _buildAnimatedLogo(),
                               const SizedBox(height: 32),
-
-                              // Título principal
                               const Text(
                                 'AmiPet',
                                 style: TextStyle(
@@ -120,8 +117,6 @@ class _LoginScreenState extends State<LoginScreen>
                                 textAlign: TextAlign.center,
                               ),
                               const SizedBox(height: 16),
-
-                              // Subtítulo
                               const Text(
                                 'Tu compañero digital para\nel cuidado de mascotas',
                                 style: TextStyle(
@@ -136,8 +131,6 @@ class _LoginScreenState extends State<LoginScreen>
                           ),
                         ),
                       ),
-
-                      // Sección de botones de login
                       Expanded(
                         flex: 2,
                         child: Container(
@@ -175,10 +168,8 @@ class _LoginScreenState extends State<LoginScreen>
                                     ),
                                   ],
                                 ),
-
                                 Column(
                                   children: [
-                                    // Botón de Google
                                     _buildLoginButton(
                                       icon: Container(
                                         width: 20,
@@ -197,10 +188,7 @@ class _LoginScreenState extends State<LoginScreen>
                                       textColor: Colors.white,
                                       onTap: () => _handleGoogleLogin(),
                                     ),
-
                                     const SizedBox(height: 16),
-
-                                    // Botón de Apple
                                     _buildLoginButton(
                                       icon: const Icon(
                                         Icons.apple,
@@ -214,8 +202,6 @@ class _LoginScreenState extends State<LoginScreen>
                                     ),
                                   ],
                                 ),
-
-                                // Términos y condiciones
                                 const Text(
                                   'Al continuar, aceptas nuestros\nTérminos de Servicio y Política de Privacidad',
                                   style: TextStyle(
@@ -262,7 +248,6 @@ class _LoginScreenState extends State<LoginScreen>
           child: Stack(
             alignment: Alignment.center,
             children: [
-              // Patita principal
               Transform.scale(
                 scale: 1.0 + (_pawAnimation.value * 0.1),
                 child: const Icon(
@@ -271,8 +256,6 @@ class _LoginScreenState extends State<LoginScreen>
                   color: Colors.white,
                 ),
               ),
-
-              // Patitas decorativas flotantes
               ..._buildFloatingPaws(),
             ],
           ),
@@ -369,22 +352,30 @@ class _LoginScreenState extends State<LoginScreen>
   }
 
   void _handleGoogleLogin() {
-    // Aquí implementarías la lógica de login con Google
     ScaffoldMessenger.of(context).showSnackBar(
       const SnackBar(
         content: Text('Iniciando sesión con Google...'),
         backgroundColor: Color(0xFF10B981),
+        duration: Duration(milliseconds: 1500),
       ),
     );
+
+    Future.delayed(const Duration(milliseconds: 1500), () {
+      Navigator.pushReplacementNamed(context, '/home');
+    });
   }
 
   void _handleAppleLogin() {
-    // Aquí implementarías la lógica de login con Apple
     ScaffoldMessenger.of(context).showSnackBar(
       const SnackBar(
         content: Text('Iniciando sesión con Apple...'),
         backgroundColor: Color(0xFF047857),
+        duration: Duration(milliseconds: 1500),
       ),
     );
+
+    Future.delayed(const Duration(milliseconds: 1500), () {
+      Navigator.pushReplacementNamed(context, '/home');
+    });
   }
 }
