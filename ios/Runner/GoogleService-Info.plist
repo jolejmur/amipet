@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<key>CLIENT_ID</key>
+	<string>589763065955-n0q5t9omvt720kgoj7v9ordfcsde0hoj.apps.googleusercontent.com</string>
+	<key>REVERSED_CLIENT_ID</key>
+	<string>com.googleusercontent.apps.589763065955-n0q5t9omvt720kgoj7v9ordfcsde0hoj</string>
+	<key>API_KEY</key>
+	<string>AIzaSyDrwnxqnGinkl70WWa9l0KGX517pxzbZe0</string>
+	<key>GCM_SENDER_ID</key>
+	<string>589763065955</string>
+	<key>PLIST_VERSION</key>
+	<string>1</string>
+	<key>BUNDLE_ID</key>
+	<string>bo.com.amipet.amipet</string>
+	<key>PROJECT_ID</key>
+	<string>amipet-7930d</string>
+	<key>STORAGE_BUCKET</key>
+	<string>amipet-7930d.firebasestorage.app</string>
+	<key>IS_ADS_ENABLED</key>
+	<false></false>
+	<key>IS_ANALYTICS_ENABLED</key>
+	<false></false>
+	<key>IS_APPINVITE_ENABLED</key>
+	<true></true>
+	<key>IS_GCM_ENABLED</key>
+	<true></true>
+	<key>IS_SIGNIN_ENABLED</key>
+	<true></true>
+	<key>GOOGLE_APP_ID</key>
+	<string>1:589763065955:ios:0d1ff092c81ef35e2fe056</string>
+</dict>
+</plist>

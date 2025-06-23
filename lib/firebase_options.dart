@@ -44,40 +44,43 @@ class DefaultFirebaseOptions {
   }
 
   static const FirebaseOptions web = FirebaseOptions(
-    apiKey: 'tu-api-key-web',
-    appId: 'tu-app-id-web',
-    messagingSenderId: 'tu-sender-id',
+    apiKey: 'AIzaSyBQaKYVH1wqI5lq7Wvn03J-IEM_y6OUSTY',
+    appId: '1:589763065955:web:ac806b1585c607af2fe056',
+    messagingSenderId: '589763065955',
     projectId: 'amipet-7930d',
     authDomain: 'amipet-7930d.firebaseapp.com',
-    storageBucket: 'amipet-7930d.appspot.com',
+    storageBucket: 'amipet-7930d.firebasestorage.app',
+    measurementId: 'G-SF3TFDXS2T',
   );
 
   static const FirebaseOptions android = FirebaseOptions(
-    apiKey: 'tu-api-key-android',
-    appId: 'tu-app-id-android',
-    messagingSenderId: 'tu-sender-id',
+    apiKey: 'AIzaSyBQaKYVH1wqI5lq7Wvn03J-IEM_y6OUSTY',
+    appId:
+        '1:589763065955:android:ac806b1585c607af2fe056', // Esto se actualizará cuando configures Android
+    messagingSenderId: '589763065955',
     projectId: 'amipet-7930d',
-    storageBucket: 'amipet-7930d.appspot.com',
+    storageBucket: 'amipet-7930d.firebasestorage.app',
   );
 
   static const FirebaseOptions ios = FirebaseOptions(
-    apiKey: 'tu-api-key-ios',
-    appId: 'tu-app-id-ios',
-    messagingSenderId: 'tu-sender-id',
+    apiKey: 'AIzaSyDrwnxqnGinkl70WWa9l0KGX517pxzbZe0',
+    appId: '1:589763065955:ios:0d1ff092c81ef35e2fe056',
+    messagingSenderId: '589763065955',
     projectId: 'amipet-7930d',
-    storageBucket: 'amipet-7930d.appspot.com',
-    iosClientId: 'tu-ios-client-id.googleusercontent.com',
-    iosBundleId: 'com.example.amiPetApp',
+    storageBucket: 'amipet-7930d.firebasestorage.app',
+    iosClientId:
+        '589763065955-n0q5t9omvt720kgoj7v9ordfcsde0hoj.apps.googleusercontent.com',
+    iosBundleId: 'bo.com.amipet.amipet',
   );
 
   static const FirebaseOptions macos = FirebaseOptions(
-    apiKey: 'tu-api-key-macos',
-    appId: 'tu-app-id-macos',
-    messagingSenderId: 'tu-sender-id',
+    apiKey: 'AIzaSyDrwnxqnGinkl70WWa9l0KGX517pxzbZe0',
+    appId: '1:589763065955:ios:0d1ff092c81ef35e2fe056',
+    messagingSenderId: '589763065955',
     projectId: 'amipet-7930d',
-    storageBucket: 'amipet-7930d.appspot.com',
-    iosClientId: 'tu-ios-client-id.googleusercontent.com',
-    iosBundleId: 'com.example.amiPetApp',
+    storageBucket: 'amipet-7930d.firebasestorage.app',
+    iosClientId:
+        '589763065955-n0q5t9omvt720kgoj7v9ordfcsde0hoj.apps.googleusercontent.com',
+    iosBundleId: 'bo.com.amipet.amipet',
   );
-}
 }
