@@ -1,4 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:firebase_auth/firebase_auth.dart';
+import '../core/services/auth_service.dart';
+import 'home_screen.dart';
 
 class LoginScreen extends StatefulWidget {
   const LoginScreen({super.key});
@@ -14,6 +17,8 @@ class _LoginScreenState extends State<LoginScreen>
   late Animation<double> _fadeAnimation;
   late Animation<double> _slideAnimation;
   late Animation<double> _pawAnimation;
+
+  bool _isLoading = false;
 
   @override
   void initState() {
@@ -55,6 +60,20 @@ class _LoginScreenState extends State<LoginScreen>
 
     _animationController.forward();
     _pawController.repeat(reverse: true);
+
+    // Verificar si el usuario ya está autenticado
+    _checkAuthState();
+  }
+
+  void _checkAuthState() {
+    if (AuthService.isSignedIn) {
+      // Si ya está autenticado, ir directamente al home
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        Navigator.of(context).pushReplacement(
+          MaterialPageRoute(builder: (context) => const HomeScreen()),
+        );
+      });
+    }
   }
 
   @override
@@ -62,6 +81,121 @@ class _LoginScreenState extends State<LoginScreen>
     _animationController.dispose();
     _pawController.dispose();
     super.dispose();
+  }
+
+  void _showLoadingDialog() {
+    showDialog(
+      context: context,
+      barrierDismissible: false,
+      builder: (BuildContext context) {
+        return const Center(
+          child: CircularProgressIndicator(
+            valueColor: AlwaysStoppedAnimation<Color>(Color(0xFF059669)),
+          ),
+        );
+      },
+    );
+  }
+
+  void _hideLoadingDialog() {
+    Navigator.of(context).pop();
+  }
+
+  void _showErrorDialog(String message) {
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: const Text('Error'),
+          content: Text(message),
+          actions: [
+            TextButton(
+              onPressed: () => Navigator.of(context).pop(),
+              child: const Text('OK'),
+            ),
+          ],
+        );
+      },
+    );
+  }
+
+  Future<void> _handleGoogleLogin() async {
+    try {
+      setState(() => _isLoading = true);
+      _showLoadingDialog();
+
+      final userCredential = await AuthService.signInWithGoogle();
+
+      if (userCredential != null) {
+        _hideLoadingDialog();
+
+        // Mostrar mensaje de éxito
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text(
+                '¡Bienvenido ${userCredential.user?.displayName ?? 'Usuario'}!'),
+            backgroundColor: const Color(0xFF10B981),
+            duration: const Duration(milliseconds: 1500),
+          ),
+        );
+
+        // Navegar al home
+        await Future.delayed(const Duration(milliseconds: 500));
+        if (mounted) {
+          Navigator.of(context).pushReplacement(
+            MaterialPageRoute(builder: (context) => const HomeScreen()),
+          );
+        }
+      } else {
+        _hideLoadingDialog();
+        // El usuario canceló el sign in
+      }
+    } catch (e) {
+      _hideLoadingDialog();
+      _showErrorDialog('Error al iniciar sesión con Google: ${e.toString()}');
+    } finally {
+      if (mounted) {
+        setState(() => _isLoading = false);
+      }
+    }
+  }
+
+  Future<void> _handleAppleLogin() async {
+    try {
+      setState(() => _isLoading = true);
+      _showLoadingDialog();
+
+      final userCredential = await AuthService.signInWithApple();
+
+      if (userCredential != null) {
+        _hideLoadingDialog();
+
+        // Mostrar mensaje de éxito
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text(
+                '¡Bienvenido ${userCredential.user?.displayName ?? 'Usuario'}!'),
+            backgroundColor: const Color(0xFF047857),
+            duration: const Duration(milliseconds: 1500),
+          ),
+        );
+
+        // Navegar al home
+        await Future.delayed(const Duration(milliseconds: 500));
+        if (mounted) {
+          Navigator.of(context).pushReplacement(
+            MaterialPageRoute(builder: (context) => const HomeScreen()),
+          );
+        }
+      }
+    } catch (e) {
+      _hideLoadingDialog();
+      _showErrorDialog('Error al iniciar sesión con Apple: ${e.toString()}');
+    } finally {
+      if (mounted) {
+        setState(() => _isLoading = false);
+      }
+    }
   }
 
   @override
@@ -186,7 +320,9 @@ class _LoginScreenState extends State<LoginScreen>
                                       text: 'Continuar con Google',
                                       backgroundColor: const Color(0xFF10B981),
                                       textColor: Colors.white,
-                                      onTap: () => _handleGoogleLogin(),
+                                      onTap: _isLoading
+                                          ? null
+                                          : _handleGoogleLogin,
                                     ),
                                     const SizedBox(height: 16),
                                     _buildLoginButton(
@@ -198,7 +334,8 @@ class _LoginScreenState extends State<LoginScreen>
                                       text: 'Continuar con Apple',
                                       backgroundColor: const Color(0xFF047857),
                                       textColor: Colors.white,
-                                      onTap: () => _handleAppleLogin(),
+                                      onTap:
+                                          _isLoading ? null : _handleAppleLogin,
                                     ),
                                   ],
                                 ),
@@ -310,7 +447,7 @@ class _LoginScreenState extends State<LoginScreen>
     required String text,
     required Color backgroundColor,
     required Color textColor,
-    required VoidCallback onTap,
+    required VoidCallback? onTap,
   }) {
     return Material(
       color: Colors.transparent,
@@ -321,15 +458,19 @@ class _LoginScreenState extends State<LoginScreen>
           width: double.infinity,
           padding: const EdgeInsets.symmetric(vertical: 16),
           decoration: BoxDecoration(
-            color: backgroundColor,
+            color: onTap == null
+                ? backgroundColor.withOpacity(0.5)
+                : backgroundColor,
             borderRadius: BorderRadius.circular(16),
-            boxShadow: [
-              BoxShadow(
-                color: backgroundColor.withOpacity(0.3),
-                blurRadius: 12,
-                offset: const Offset(0, 4),
-              ),
-            ],
+            boxShadow: onTap == null
+                ? []
+                : [
+                    BoxShadow(
+                      color: backgroundColor.withOpacity(0.3),
+                      blurRadius: 12,
+                      offset: const Offset(0, 4),
+                    ),
+                  ],
           ),
           child: Row(
             mainAxisAlignment: MainAxisAlignment.center,
@@ -341,7 +482,7 @@ class _LoginScreenState extends State<LoginScreen>
                 style: TextStyle(
                   fontSize: 16,
                   fontWeight: FontWeight.w600,
-                  color: textColor,
+                  color: onTap == null ? textColor.withOpacity(0.5) : textColor,
                 ),
               ),
             ],
@@ -349,33 +490,5 @@ class _LoginScreenState extends State<LoginScreen>
         ),
       ),
     );
-  }
-
-  void _handleGoogleLogin() {
-    ScaffoldMessenger.of(context).showSnackBar(
-      const SnackBar(
-        content: Text('Iniciando sesión con Google...'),
-        backgroundColor: Color(0xFF10B981),
-        duration: Duration(milliseconds: 1500),
-      ),
-    );
-
-    Future.delayed(const Duration(milliseconds: 1500), () {
-      Navigator.pushReplacementNamed(context, '/home');
-    });
-  }
-
-  void _handleAppleLogin() {
-    ScaffoldMessenger.of(context).showSnackBar(
-      const SnackBar(
-        content: Text('Iniciando sesión con Apple...'),
-        backgroundColor: Color(0xFF047857),
-        duration: Duration(milliseconds: 1500),
-      ),
-    );
-
-    Future.delayed(const Duration(milliseconds: 1500), () {
-      Navigator.pushReplacementNamed(context, '/home');
-    });
   }
 }

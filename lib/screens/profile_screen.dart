@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:firebase_auth/firebase_auth.dart';
+import '../core/services/auth_service.dart';
 import 'home_screen.dart';
 
 class ProfileScreen extends StatefulWidget {
@@ -43,7 +45,7 @@ class _ProfileScreenState extends State<ProfileScreen>
     {
       'icon': Icons.pets,
       'title': 'Mis Mascotas',
-      'subtitle': '${2} mascotas registradas',
+      'subtitle': '2 mascotas registradas',
       'color': Color(0xFF059669),
     },
     {
@@ -119,6 +121,8 @@ class _ProfileScreenState extends State<ProfileScreen>
 
   @override
   Widget build(BuildContext context) {
+    final user = AuthService.currentUser;
+
     return Scaffold(
       body: Container(
         decoration: const BoxDecoration(
@@ -144,7 +148,7 @@ class _ProfileScreenState extends State<ProfileScreen>
                   opacity: _fadeAnimation.value,
                   child: Column(
                     children: [
-                      _buildHeader(),
+                      _buildHeader(user),
                       Expanded(
                         child: Container(
                           margin: const EdgeInsets.only(top: 20),
@@ -198,7 +202,17 @@ class _ProfileScreenState extends State<ProfileScreen>
     );
   }
 
-  Widget _buildHeader() {
+  Widget _buildHeader(User? user) {
+    final displayName = user?.displayName ?? 'Usuario';
+    final email = user?.email ?? 'email@ejemplo.com';
+    final photoURL = user?.photoURL;
+    final creationTime = user?.metadata.creationTime;
+
+    String memberSince = 'Miembro reciente';
+    if (creationTime != null) {
+      memberSince = 'Miembro desde ${creationTime.year}';
+    }
+
     return Container(
       padding: const EdgeInsets.all(20),
       child: Row(
@@ -212,38 +226,46 @@ class _ProfileScreenState extends State<ProfileScreen>
                 color: Colors.white.withOpacity(0.3),
                 width: 3,
               ),
-              image: const DecorationImage(
-                image: NetworkImage(
-                    'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=150&h=150&fit=crop&crop=face'),
-                fit: BoxFit.cover,
-              ),
+              image: photoURL != null
+                  ? DecorationImage(
+                      image: NetworkImage(photoURL),
+                      fit: BoxFit.cover,
+                    )
+                  : null,
             ),
+            child: photoURL == null
+                ? Icon(
+                    Icons.person,
+                    size: 40,
+                    color: Colors.white.withOpacity(0.8),
+                  )
+                : null,
           ),
           const SizedBox(width: 20),
-          const Expanded(
+          Expanded(
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text(
-                  'Carlos Mendoza',
-                  style: TextStyle(
+                  displayName,
+                  style: const TextStyle(
                     fontSize: 24,
                     color: Colors.white,
                     fontWeight: FontWeight.bold,
                   ),
                 ),
                 Text(
-                  'carlos.mendoza@email.com',
-                  style: TextStyle(
+                  email,
+                  style: const TextStyle(
                     fontSize: 14,
                     color: Colors.white70,
                     fontWeight: FontWeight.w400,
                   ),
                 ),
-                SizedBox(height: 4),
+                const SizedBox(height: 4),
                 Text(
-                  'Miembro desde 2023',
-                  style: TextStyle(
+                  memberSince,
+                  style: const TextStyle(
                     fontSize: 12,
                     color: Colors.white60,
                   ),
@@ -587,9 +609,29 @@ class _ProfileScreenState extends State<ProfileScreen>
                   child: const Text('Cancelar'),
                 ),
                 ElevatedButton(
-                  onPressed: () {
+                  onPressed: () async {
                     Navigator.pop(context);
-                    Navigator.pushReplacementNamed(context, '/login');
+                    try {
+                      await AuthService.signOut();
+                      if (mounted) {
+                        ScaffoldMessenger.of(context).showSnackBar(
+                          const SnackBar(
+                            content: Text('Sesión cerrada exitosamente'),
+                            backgroundColor: Color(0xFF059669),
+                          ),
+                        );
+                        // Navigation is handled by StreamBuilder in main.dart
+                      }
+                    } catch (e) {
+                      if (mounted) {
+                        ScaffoldMessenger.of(context).showSnackBar(
+                          SnackBar(
+                            content: Text('Error al cerrar sesión: $e'),
+                            backgroundColor: const Color(0xFFEF4444),
+                          ),
+                        );
+                      }
+                    }
                   },
                   style: ElevatedButton.styleFrom(
                     backgroundColor: const Color(0xFFEF4444),
